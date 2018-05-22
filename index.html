@@ -1,0 +1,118 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>今天你记仇了没</title>
+		<style>
+			.main {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			#content-box {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin: 20px 0;
+			}
+
+			.text {
+				width: 200px;
+				line-height: 22px;
+			}
+
+			.btns {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				position: relative;
+			}
+
+			.btns button {
+				border: 1px solid #d22;
+				color: #fff;
+				outline: none;
+				border-radius: 4px;
+				padding: 4px 10px;
+				background: #f98080;
+				margin: 0 10px;
+				cursor: pointer;
+			}
+
+			#imageChange {
+				position: absolute;
+				width: 50px;
+				height: 30px;
+				right: 10px;
+				top: 0;
+				opacity: 0;
+				z-index: 999;
+				cursor: pointer;
+			}
+
+			#screen-box {
+				margin: 20px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="main">
+			<div id="content-box">
+				<img id="img" src="./images/jichou.png" alt="图片">
+				<p class="text" contenteditable="true">
+					<span id="date"></span><span>没人给我点赞，这个仇我先记下来了</span>
+				</p>
+			</div>
+			<div class="btns">
+				<button id="done">生成</button>
+				<button>上传</button>
+				<input type="file" id="imageChange" accept="image/jpg, image/jpeg, image/png">
+			</div>
+			<div id="screen-box">
+				
+			</div>
+		</div>
+		
+	</body>
+
+	<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+	<script type="text/javascript">
+		//自动生成当天日期
+		(function createDate() {
+			const date = new Date();
+			const dateEle = document.getElementById('date');
+    		dateEle.innerText = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日，`;
+		})();
+
+		const doneBtn = document.getElementById('done');
+		const uploadBtn = document.getElementById('imageChange');
+
+		const contentBox = document.getElementById('content-box');
+		const screenBox = document.getElementById('screen-box');
+
+		doneBtn.onclick = e => {
+			html2canvas(contentBox, {
+				allowTain: true,
+				taintTest: true,
+				backgroundColor: '#d22',
+				onrendered: function(canvas) {
+					//先清空子元素
+					screenBox.innerHTML = '';
+					screenBox.appendChild(canvas);
+				}
+			})
+		}
+
+		//改变照片
+		uploadBtn.onchange = ev => {
+			const imgEle = document.getElementById('img');
+			if (ev.target.files && ev.target.files[0]) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					imgEle.setAttribute('src', e.target.result)
+				}
+				reader.readAsDataURL(ev.target.files[0]);
+			}
+		}
+	</script>
+</html>
